@@ -1,40 +1,33 @@
 import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
-import UserList from './components/User.js'
-import axios from 'axios'
+import Navbar from './components/Navbar';
+import ProjectsTable from './components/pages/ProjectsTable';
+import TodoTable from './components/pages/TodoTable';
+import UsersTable from './components/pages/UsersTable';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      'users': [
-        {
-          "username": "test",
-          "first_name": "Pert",
-          "last_name": "Petrovich",
-          "email": "test@aaa.ru"
-        }
-      ]
+
+const App = () => {
+    const menu = {
+        "projects": () => <ProjectsTable/>,
+        "todos": () => <TodoTable/>,
+        "users": () => <UsersTable/>,
+    };
+    let menuLinks = [];
+    for (let element in menu) {
+      menuLinks.push(element);
     }
-  }
 
-  componentDidMount() {
-    axios.get('http://127.0.0.1:8000/api/users')
-      .then(response => {
-        const users = response.data
-        this.setState({
-          'users': users
-        })
-      }).catch(error => console.log(error))
-  }
-
-  render () {
     return (
-      <div>
-        <UserList users={this.state.users} />
-      </div>
+        <BrowserRouter>
+            <Navbar/>
+            <Routes>
+                {menuLinks.map(link =>
+                    <Route path={link} element={menu[link]()}/>
+                )}
+            </Routes>
+        </BrowserRouter>
     )
-  }
 }
 
 export default App;
